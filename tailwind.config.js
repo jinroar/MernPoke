@@ -8,7 +8,8 @@ export default {
     extend: {
       backgroundImage: {
         'hero-pattern': "url('https://wallpaperaccess.com/full/8406757.gif')",
-        'footer-texture': "url('/img/footer-texture.png')"
+        'footer-texture': "url('/img/footer-texture.png')",
+        'searchbak': "url('/src/assets/searchbak.png')"
       }
     },
     colors: {
@@ -23,6 +24,8 @@ export default {
       'bubble-gum': '#ff77e9',
       'bermuda': '#78dcca',
       'poke-yellow': '#fcd34d',
+      'red': '#F87171',
+      'grey-glass':'#6B7280',
     },
     extend: { headings: {
       h1: {

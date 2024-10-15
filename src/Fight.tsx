@@ -21,7 +21,6 @@ import { response } from "express";
 const Fight = () => {
 
 
-
   const location = useLocation();
   const { pokemon1, pokemon2 } = location.state;
 
@@ -29,16 +28,15 @@ const Fight = () => {
   const [pokemon2Data, setPOkemon2Data] = useState<Pokemon | null>(null);
 
   const [move1, setMove1] = useState<Moves | null>(null);
-  // const [pokemon2Data, setPOkemon2Data] = useState<Pokemon | null>(null);
-  // const [pokemon2Data, setPOkemon2Data] = useState<Pokemon | null>(null);
-  // const [pokemon2Data, setPOkemon2Data] = useState<Pokemon | null>(null);
+  const [move2, setMove2] = useState<Moves | null>(null);
+  const [move3, setMove3] = useState<Moves | null>(null);
+  const [move4, setMove4] = useState<Moves | null>(null);
 
+  const [result, setResult] = useState<string | null>(null);
 
   const [pokemonList, setPokemonList] = useState<PokemonList | null>(null);
 
-  useEffect(() => {
-    listPokemon();
-  }, [])
+
 
   const listPokemon = async () => {
     const fetchJson = await fetch("http://localhost:8080/api/pokemon/list");
@@ -51,9 +49,10 @@ const Fight = () => {
   const [pkmn2Hp, setPkmn2Hp] = useState(0);
 
   const [capture, setCapture] = useState<boolean>(false);
+  const [stored, setStored] = useState<boolean>(false);
 
-  const defaultHp1 = pokemon1Data?.stats.find((s) => s.stat.name === "hp")?.base_stat || 0 ;
-  const defaultHp2 = pokemon2Data?.stats.find((s) => s.stat.name === "hp")?.base_stat || 0 ;
+  const defaultHp1 = pokemon1Data?.stats.find((s) => s.stat.name === "hp")?.base_stat || 0;
+  const defaultHp2 = pokemon2Data?.stats.find((s) => s.stat.name === "hp")?.base_stat || 0;
 
 
   function getRandomElFromArray(arrayLenght) {
@@ -62,19 +61,26 @@ const Fight = () => {
 
   const showMove = async (pokemon: typeof pokemon2Data) => {
 
-    const move = pokemon?.moves[getRandomElFromArray(pokemon.moves.length)].move.name
-    const moveURL = pokemon?.moves[getRandomElFromArray(pokemon.moves.length)].move.url
+    const move1 = pokemon?.moves[getRandomElFromArray(pokemon.moves.length)].move.url
+    const data1 = await fetch(`${move1}`);
+    const show1 = await data1.json();
 
-    const fetchJson = await fetch(`${moveURL}`);
-    const dmg = await fetchJson.json();
+    const move2 = pokemon?.moves[getRandomElFromArray(pokemon.moves.length)].move.url
+    const data2 = await fetch(`${move2}`);
+    const show2 = await data2.json();
 
-    console.log(move);
-    console.log(dmg.power);
+    const move3 = pokemon?.moves[getRandomElFromArray(pokemon.moves.length)].move.url
+    const data3 = await fetch(`${move3}`);
+    const show3 = await data3.json();
 
+    const move4 = pokemon?.moves[getRandomElFromArray(pokemon.moves.length)].move.url
+    const data4 = await fetch(`${move4}`);
+    const show4 = await data4.json();
 
-    setMove1(dmg)
-    return dmg.power;
-
+    setMove1(show1);
+    setMove2(show2);
+    setMove3(show3);
+    setMove4(show4);
   };
 
 
@@ -93,22 +99,44 @@ const Fight = () => {
 
   }
 
-const hule = async (pokemon1Data: Pokemon | null) => {
-  const url = `http://localhost:8080/api/pokemon/store`
+  const hule = async (pokemon1Data: Pokemon | null) => {
 
-  const capturedPokemon = {
-    name: pokemon1Data?.name
+
+    const calculateProbability = async () => {
+      const probability = (100 - (50 * (pkmn1Hp / defaultHp1)));
+      const randomValue = Math.random();
+
+
+      if (randomValue < probability) {
+        setResult('Captured!! YIPPIEE 🎉🎉');
+
+        const url = `http://localhost:8080/api/pokemon/store`
+
+        const capturedPokemon = {
+          name: pokemon1Data?.name
+        }
+
+        await axios.post(url, capturedPokemon)
+          .then((response) => {
+            console.log(response)
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+
+        setStored(true);
+
+      } else {
+        setResult('Escaped!!');
+      }
+    };
+
+    calculateProbability();
+
+
+
+
   }
-
-  await axios.post(url, capturedPokemon)
-    .then((response) => {
-      console.log(response)
-    })
-    .catch((error) => {
-      console.log(error)
-    })
-    
-}
 
 
   const [showHideButton, setShowHideButton] = useState(false);
@@ -117,57 +145,62 @@ const hule = async (pokemon1Data: Pokemon | null) => {
     setShowHideButton(true);
   };
 
+const enemy = async (pokemon: typeof pokemon2Data)  => {
+
+  const move1 = pokemon?.moves[getRandomElFromArray(pokemon.moves.length)].move.url
+  const data1 = await fetch(`${move1}`);
+  const move = await data1.json();
+
+  if (pkmn2Hp <= 0) {
+    setPkmn2Hp(0);
+    
+    //add capture / end of game
+
+  } else {
+   
+    const deduct = (pkmn2Hp - (move?.power || 0));
+    console.log(pokemon2Data?.stats.find((s) => s.stat.name === "hp")?.base_stat || 0);
+
+    console.log(move?.power || 0);
+    console.log(deduct);
+
+    addItem("--------------------------------------------------------------------");
+    addItem(pokemon1Data?.name + " used " + move?.name.toUpperCase + " with a power of "+  (move?.power||0));
+    addItem(pokemon2Data?.name + " remaining HP: " +deduct);
+
+    setPkmn2Hp(deduct);
+
+  }
+
+}
+
   const payt = (move, target) => {
 
-    if (pkmn1Hp <= 0) {
+    setCapture(true);
+
+    if (0 >= pkmn1Hp) {
       setPkmn1Hp(0);
       addItem(pokemon1Data?.name + " Fainted!!");
 
 
-       //add capture / end of game 
-      hule(pokemon1Data);
-
-     
-
-      setCapture(true);
-
     } else {
 
       if (target === 1) {
-        const deduct1 = (pkmn1Hp - (move?.power || 0));
+        const deduct = (pkmn1Hp - (move?.power || 0));
         console.log(pokemon1Data?.stats.find((s) => s.stat.name === "hp")?.base_stat || 0);
 
         console.log(move?.power || 0);
-        console.log(deduct1);
+        console.log(deduct);
+///bacc
+        addItem("--------------------------------------------------------------------");
+        addItem(`pokemon2Data?.name + " used " + (move?.name.toUpperCase()  + " with a power of "+  (move?.power||0)`);
+        addItem(pokemon1Data?.name + " remaining HP: " +deduct);
 
-        addItem(pokemon2Data?.name + " used " + move?.name + " current hp: " + deduct1);
-
-        setPkmn1Hp(deduct1);
-       
+        setPkmn1Hp(deduct);
+        enemy(pokemon1Data);
       }
 
     }
-    if (pkmn2Hp <= 0) {
-      setPkmn2Hp(0);
-
-      //add capture / end of game
-
-    } else {
-
-      if (target === 2) {
-        const deduct2 = (pkmn2Hp - (move?.power || 0));
-        console.log(pokemon2Data?.stats.find((s) => s.stat.name === "hp")?.base_stat || 0);
-
-        console.log(move?.power || 0);
-        console.log(deduct2);
-
-        setPkmn1Hp(deduct2);
-
-      }
-    }
-    setHasFightResults(true);
-
-
 
   }
 
@@ -178,8 +211,14 @@ const hule = async (pokemon1Data: Pokemon | null) => {
 
   };
 
+  useEffect(() => {
+    listPokemon();
+    selected();
+
+  }, [])
+
   return (
-    <div className="bg-[url('https://wallpaperaccess.com/full/8406757.gif')]   
+    <div className="  overflow-hidden  bg-[url('https://wallpaperaccess.com/full/8406757.gif')]   
         text-poke-yellow">
       <button>   <Link to="/About">Back to Menu</Link> </button><br></br><br></br>
 
@@ -187,33 +226,51 @@ const hule = async (pokemon1Data: Pokemon | null) => {
 
         <div className="grid grid-rows-4 grid-flow-col gap-4">
           <div>01
+            <button className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded" onMouseEnter={handleClick} onClick={() => { showMove(pokemon2Data) }}>
+              Generate Move Set</button>
+            <button className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded" onClick={() => { selected() }}>
+              ▶</button>
 
-          <>
-                <strong className="fight"> 🔥 {pokemon1Data?.name.toUpperCase()}: {pkmn1Hp} 🔥</strong>   <br></br>
-                <strong className="fight"> 🔥 vs 🔥</strong> <br></br>
-                <strong className="fight"> 🔥 {pokemon2Data?.name.toUpperCase()}: {pkmn2Hp} 🔥</strong> <br></br>
+            <>
 
-                <ul>
+
+              <ul>
                 {items.map((item, index) => (
                   <li key={index}>{item}</li>
                 ))}
               </ul>
 
-              </>
-            
-              {
-            capture && (
-              <>
-                <strong className="fight"> 🔥  {pokemon1Data?.name.toUpperCase()}  Current HP: {pkmn1Hp} 🔥</strong>   <br></br>
-               <strong className="fight"> 🏀🎱⚾🏐⚽ THROW POKEBOL ??????? 🏀🎱⚾🏐⚽</strong> <br></br>
-              
-                <strong className="fight"> 🔥 Capture Rate ??????? {(100-(50*(pkmn1Hp/defaultHp1)))} 🔥</strong> <br></br>
-                <img className="size-50" alt="https://media1.tenor.com/m/gnZcXcBonfUAAAAC/you-are-my-sunshine-lebron.gif" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTE0OWRheXo4dDVqOXgydDdnNDRiZHBlY3VpMGZjbTN3Z2tqcGgxbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7OzAnGdw9bWTH5iroJ/giphy.gif" />
+            </>
+
+            {
+              capture && (
+                <>
+                  <strong className="fight"> 🔥  {pokemon1Data?.name.toUpperCase()}  Current HP: {pkmn1Hp} 🔥</strong>   <br></br>
+                  <strong className="fight"> 🏀🎱⚾🏐⚽ THROW POKEBOL ??????? 🏀🎱⚾🏐⚽</strong> <br></br>
+
+                  <strong className="fight"> 🔥 Capture Rate ??????? {(100 - (50 * (pkmn1Hp / defaultHp1)))}% 🔥</strong> <br></br>
+                  {showHideButton ? (
+                    <div >
+                      <PinkButton buttonClick={() => { hule(pokemon1Data); }} label="💥CAPTURE???💥" /><br />
+                    </div>
+                  ) : null}
+                  <img className="size-50" alt="https://media1.tenor.com/m/gnZcXcBonfUAAAAC/you-are-my-sunshine-lebron.gif" src="https://i.giphy.com/media/v1.Y2lkPTc5MGI3NjExeTE0OWRheXo4dDVqOXgydDdnNDRiZHBlY3VpMGZjbTN3Z2tqcGgxbiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7OzAnGdw9bWTH5iroJ/giphy.gif" />
+
+                </>
+              )
+            }
+            {
+              stored && (
+                <>
+                  {result && <p>{result}</p>}
 
 
-              </>
-            )
-          }
+                  <div>
+                    <button className=" h-20 w-70 top-40    hover:border-poke-yellow border-spacing-2 border-4 ..."><Link to="/Stored"> Stored Pokemon </Link></button>
+                  </div>
+                </>
+              )
+            }
 
           </div>
 
@@ -260,44 +317,60 @@ const hule = async (pokemon1Data: Pokemon | null) => {
 
                 </div>
               }
+              {
+                move2 &&
+                <div className="bg-transparent p-8 rounded-lg
+                        border-2 border-white shadow-lg  
+                        " onClick={() => payt(move2, 1)}>
+                  <h1 className="text-3xl font-bold mb-4">
+                    {move2.name}
 
-              <div className="bg-transparent p-8 rounded-lg
-                        border-2 border-white shadow-lg  ">
-                <h1 className="text-3xl font-bold mb-4">
-                  Moves
-                </h1>
-                <p className="text-lg">
-                  Choose wisely 😎😎😎
-                </p>
+                  </h1>
+                  <p className="text-lg">
+                    Damage:  {move2.power || memapower}
+                  </p>
 
-
-              </div>
+                </div>
+              }
 
             </div>
             <div className="row-start-2">
               <div>04
-                <div className="bg-transparent p-8 rounded-lg
-                        border-2 border-white shadow-lg  ">
-                  <h1 className="text-3xl font-bold mb-4">
-                    Moves
-                  </h1>
-                  <p className="text-lg">
-                    Choose wisely 😎😎😎
-                  </p>
-                </div>
+                {
+                  move3 &&
+                  <div className="bg-transparent p-8 rounded-lg
+                        border-2 border-white shadow-lg  
+                        " onClick={() => payt(move3, 1)}>
+                    <h1 className="text-3xl font-bold mb-4">
+                      {move3.name}
 
-                <div className="bg-transparent p-8 rounded-lg
-                        border-2 border-white shadow-lg  ">
-                  <h1 className="text-3xl font-bold mb-4">
-                    Moves
-                  </h1>
-                  <p className="text-lg">
-                    Choose wisely 😎😎😎
-                  </p>
-                </div>
+                    </h1>
+                    <p className="text-lg">
+                      Damage:  {move3.power || memapower}
+                    </p>
+
+                  </div>
+                }
+                {
+                  move4 &&
+                  <div className="bg-transparent p-8 rounded-lg
+                        border-2 border-white shadow-lg  
+                        " onClick={() => payt(move4, 1)}>
+                    <h1 className="text-3xl font-bold mb-4">
+                      {move4.name}
+
+                    </h1>
+                    <p className="text-lg">
+                      Damage:  {move4.power || memapower}
+                    </p>
+
+                  </div>
+                }
 
               </div>
             </div>
+
+
           </div>
 
 
@@ -332,14 +405,6 @@ const hule = async (pokemon1Data: Pokemon | null) => {
       </div>
 
 
-
-      {showHideButton ? (
-        <div >
-          <PinkButton buttonClick={() => { selected(); }} label="💥FIGHT💥" /><br />
-        </div>
-      ) : null}
-
-
       <div className="box5">
 
         <div className="fight">
@@ -352,13 +417,6 @@ const hule = async (pokemon1Data: Pokemon | null) => {
               </>
             )
           }
-        </div>
-
-
-        <div className="my-8 text-center border-poke-yellow border-spacing-2 border-4">
-
-          <button className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded" onClick={() => { selected(); handleClick(); showMove(pokemon2Data); }}>FIGHT?</button>
-
         </div>
 
 

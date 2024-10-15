@@ -11,13 +11,7 @@ const capturedPokemon = {
   name: String
 }
 
-await axios.get(url, capturedPokemon)
-  .then((response) => {
-    console.log(response)
-  })
-  .catch((error) => {
-    console.log(error)
-  })
+
 
 
 const Stored = () => {
@@ -50,9 +44,7 @@ const Stored = () => {
           <li key={employee.id}>
             Id: {employee.id} <br></br>
             Name: {employee.name}<br></br>
-            Type:{employee.type},<br></br>
-            hp:  {employee.hp} <br></br>
-            attack: {employee.attack})
+          
           </li>
         ))}
       </ul>

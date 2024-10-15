@@ -3,7 +3,7 @@ const PinkButton = ({
   label
 }) => {
   return (
-    <button className="btn-grad"
+    <button className="bg-blend-color-burnble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded"
       style={{
         color: "white",
         fontSize: 24

@@ -49,7 +49,11 @@ ConnectDB();
 // app.use("/api/list", listRoutes);
 app.use("/api/pokemon", pokeRoutes);
 
+
+
+
+
 app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port} test`);
+  console.log(`Server running at http://localhost:${port}`);
 });
 

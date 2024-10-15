@@ -12,6 +12,7 @@ import Stored from "./pages/Stored";
 import PickPokemon from "./PickPokemon";
 import SearchPokemon from "./SearchPokemon";
 import Fight from "./Fight";
+import Capture from './Capture';
 
 const Try =  () => {
 
@@ -59,6 +60,10 @@ const Try =  () => {
                         path="/PickPokemon"
                         element={<PickPokemon />}
                     />
+                              <Route
+                        path="/Capture"
+                        element={<Capture />}
+                    />
 
                     {/* If any route mismatches the upper 
           route endpoints then, redirect triggers 
@@ -69,6 +74,8 @@ const Try =  () => {
                         element={<Navigate to="/" />}
                     />
                 </Routes>
+
+                
             </Router>
 
   </div>

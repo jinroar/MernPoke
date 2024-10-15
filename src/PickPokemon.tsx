@@ -8,7 +8,7 @@ import './index.css';
 import axios from 'axios';
 import PokemonData from "../api/src/PokeMongo";
 import pokeRoutes from "../api/src/pokemon";
-
+import defaultGif from './assets/mysunshine.gif';
 
 import { Link } from "react-router-dom";
 
@@ -32,9 +32,9 @@ const PickPokemon = () => {
 
     const fetchJson1 = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon}`);
     const pokedata = await fetchJson1.json();
-   
 
-    console.log( pokemon1Data?.name);
+
+    console.log(pokemon1Data?.name);
 
     setPOkemon1Data(pokedata); //take note of this in the future
 
@@ -108,28 +108,33 @@ const PickPokemon = () => {
 
 
   return (
-    <div className="bg-[url('https://wallpaperaccess.com/full/8406757.gif')] max-w-screen w-screen h-screen max-h-screen  grid-cols-4 content-center ...
+    <div className=" overflow-hidden bg-[url('https://wallpaperaccess.com/full/8406757.gif')] max-w-screen w-screen h-screen max-h-screen  grid-cols-4 content-center ...
         text-poke-yellow">
 
-      <button className="my-8 border-poke-yellow border-spacing-2 border-4">
+      <button className="absolute inset-y-0  w-70 h-10  text-center  border-poke-yellow border-spacing-2 border-4">
         <Link to="/About">Back to Menu</Link> </button>
 
-      <br></br><br></br>
-
-      <div className="my-8 h-56 grid grid-cols-4 row-auto gap-4 content-center ...">
+      <div className="relative inset-y-2 left-52  my-8 h-56 grid grid-cols-4 row-auto gap-4 content-center ...">
         {
           pokemon1Data &&
-          <div className="border-poke-yellow border-spacing-2 border-4">
-            <button className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded" onClick={() => selectPokemon(pokemon1Data.name)}>
-              <Link to="/SearchPokemon" state={ pokemon1Data.name } > Choose {pokemon1Data?.name.toUpperCase()}</Link>
-
-            </button>
-
-            <div className="box1">
-              <div className="ibox1">
-                <div className="imgbox1">
-                  <img className="gif" src={pokemon1Data.sprites.other.showdown.front_default} />
+          <div className="border-poke-yellow border-spacing-2 border-4 bg-grey-glass bg-opacity-20 hover:bg-tahiti/25 content-center" onClick={() => selectPokemon(pokemon1Data.name)}>
+            <Link to="/SearchPokemon" state={pokemon1Data.name} >
+              <div className="relative group conte">
+                <div className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded">
+                  {pokemon1Data?.name.toUpperCase()}
                 </div>
+
+                <img
+                  src={pokemon1Data.sprites.other.showdown.front_default || defaultGif}
+                  alt="Beautiful Landscape"
+                  className=" centeerw-[100px] h-[120px] transition-opacity duration-300 ease-in-out opacity-100 group-hover:opacity-0"
+                />
+                <img
+                  src={pokemon1Data.sprites.other.showdown.back_default || defaultGif}
+                  alt="Serene Nature"
+                  className="w-[200px] h-[120px] transition-opacity duration-300 ease-in-out opacity-0 group-hover:opacity-100"
+                />
+
                 <p>
                   Name: {pokemon1Data?.name.toUpperCase()} <br />
                   HP: {pokemon1Data.stats.find(e => e.stat.name === "hp")?.base_stat} <br />
@@ -137,54 +142,77 @@ const PickPokemon = () => {
                   Defense: {pokemon1Data.stats.find(e => e.stat.name === "defense")?.base_stat}  <br /><br />
                   <AudioPlayer src={pokemon1Data.cries.latest} controls volume={0.5} onPlay={() => console.log('Playing')} onPause={() => console.log('Paused')} />
                 </p>
+
               </div>
-            </div>
+            </Link>
           </div>
         }
 
         {
           pokemon2Data &&
-          <div className="border-poke-yellow border-spacing-2 border-4">
-            <button className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded" onClick={() => selectPokemon(pokemon2Data.name)}>
-              <Link to="/SearchPokemon" state={ pokemon2Data.name } > Choose {pokemon2Data?.name.toUpperCase()}</Link>
-            </button>
-            <div className="box2">
-              <div className="ibox2">
-                <div className="imgbox2">
-                  <img className="gif" src={pokemon2Data.sprites.other.showdown.front_default} />
-                </div>
-                <p>
-                  Name: {pokemon2Data?.name.toUpperCase()} <br />
-                  HP: {pokemon2Data.stats.find(e => e.stat.name === "hp")?.base_stat} <br />
-                  Attack: {pokemon2Data.stats.find(e => e.stat.name === "attack")?.base_stat} <br />
-                  Defense: {pokemon2Data.stats.find(e => e.stat.name === "defense")?.base_stat} <br /><br />
-                  <AudioPlayer src={pokemon2Data.cries.latest} controls volume={0.5} onPlay={() => console.log('Playing')} onPause={() => console.log('Paused')} />
-                </p>
+          <div className="border-poke-yellow border-spacing-2 border-4 bg-grey-glass bg-opacity-20 hover:bg-tahiti/25 content-center" onClick={() => selectPokemon(pokemon2Data?.name)}>
+          <Link to="/SearchPokemon" state={pokemon2Data.name} >
+            <div className="relative group conte">
+              <div className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded">
+                {pokemon2Data?.name.toUpperCase()}
               </div>
+
+
+              <img
+                src={pokemon2Data.sprites.other.showdown.front_default || defaultGif}
+                alt="Beautiful Landscape"
+                className=" centeerw-[100px] h-[120px] transition-opacity duration-300 ease-in-out opacity-100 group-hover:opacity-0"
+              />
+              <img
+                src={pokemon2Data.sprites.other.showdown.back_default || defaultGif}
+                alt="Serene Nature"
+                className="w-[200px] h-[120px] transition-opacity duration-300 ease-in-out opacity-0 group-hover:opacity-100"
+              />
+
+              <p>
+                Name: {pokemon1Data?.name.toUpperCase()} <br />
+                HP: {pokemon2Data.stats.find(e => e.stat.name === "hp")?.base_stat} <br />
+                Attack: {pokemon2Data.stats.find(e => e.stat.name === "attack")?.base_stat} <br />
+                Defense: {pokemon2Data.stats.find(e => e.stat.name === "defense")?.base_stat}  <br /><br />
+                <AudioPlayer src={pokemon2Data.cries.latest} controls volume={0.5} onPlay={() => console.log('Playing')} onPause={() => console.log('Paused')} />
+              </p>
+
             </div>
-          </div>
+          </Link>
+        </div>
         }
         {
           pokemon3Data &&
-          <div className="border-poke-yellow border-spacing-2 border-4">
-            <button className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded" onClick={() => selectPokemon(pokemon3Data.name)}>
-              <Link to="/SearchPokemon" state={ pokemon3Data.name } > Choose {pokemon3Data?.name.toUpperCase()}</Link>
-            </button>
-            <div className="box2">
-              <div className="ibox2">
-                <div className="imgbox2">
-                  <img className="gif" src={pokemon3Data.sprites.other.showdown.front_default} />
-                </div>
-                <p>
-                  Name: {pokemon3Data?.name.toUpperCase()} <br />
-                  HP: {pokemon3Data.stats.find(e => e.stat.name === "hp")?.base_stat} <br />
-                  Attack: {pokemon3Data.stats.find(e => e.stat.name === "attack")?.base_stat} <br />
-                  Defense: {pokemon3Data.stats.find(e => e.stat.name === "defense")?.base_stat} <br /><br />
-                  <AudioPlayer src={pokemon3Data.cries.latest} controls volume={0.5} onPlay={() => console.log('Playing')} onPause={() => console.log('Paused')} />
-                </p>
+          <div className="border-poke-yellow border-spacing-2 border-4 bg-grey-glass bg-opacity-20 hover:bg-tahiti/25 content-center" onClick={() => selectPokemon(pokemon3Data.name)}>
+          <Link to="/SearchPokemon" state={pokemon3Data.name} >
+            <div className="relative group conte">
+              <div className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded">
+                {pokemon3Data?.name.toUpperCase()}
               </div>
+
+
+              <img
+                src={pokemon3Data.sprites.other.showdown.front_default || defaultGif}
+                alt="Beautiful Landscape"
+                className=" centeerw-[100px] h-[120px] transition-opacity duration-300 ease-in-out opacity-100 group-hover:opacity-0"
+              />
+              <img
+                src={pokemon3Data.sprites.other.showdown.back_default || defaultGif}
+                alt="Serene Nature"
+                className="w-[200px] h-[120px] transition-opacity duration-300 ease-in-out opacity-0 group-hover:opacity-100"
+              />
+
+              <p>
+                Name: {pokemon3Data?.name.toUpperCase()} <br />
+                HP: {pokemon3Data.stats.find(e => e.stat.name === "hp")?.base_stat} <br />
+                Attack: {pokemon3Data.stats.find(e => e.stat.name === "attack")?.base_stat} <br />
+                Defense: {pokemon3Data.stats.find(e => e.stat.name === "defense")?.base_stat}  <br /><br />
+                <AudioPlayer src={pokemon3Data.cries.latest} controls volume={0.5} onPlay={() => console.log('Playing')} onPause={() => console.log('Paused')} />
+              </p>
+
             </div>
-          </div>
+          </Link>
+        </div>
         }
       </div>
 
@@ -213,7 +241,7 @@ const PickPokemon = () => {
       </div>
 
 
-      <div className="my-8 text-center border-poke-yellow border-spacing-2 border-4">
+      <div className=" relative inset-y-20   my-8 text-center border-poke-yellow border-spacing-2 border-4">
 
         <button className="bg-bubble-gum hover:bg-poke-yellow  text-purple font-bold py-2 px-4 rounded" onMouseEnter={randomClick}>Hover to Randomize</button>
 

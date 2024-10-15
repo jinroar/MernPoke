@@ -4,7 +4,10 @@ const { Schema } = mongoose;
 
 const pokemonSchema = new Schema({
 
-  name: String,
+    id: { Number },
+    name: String,
+    type: { type: String },
+    hp: Number,
 
   
 }, { versionKey: false });

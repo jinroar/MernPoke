@@ -9,6 +9,7 @@ pokeRoutes.get("/list", async (req, res) => {
     res.json(list);
 });
 
+
 pokeRoutes.get("/stored", async (req, res) => {
     const jsonData = await fetch('http://localhost:3015/list');
     const list = await jsonData.json();
@@ -18,12 +19,9 @@ pokeRoutes.get("/stored", async (req, res) => {
 pokeRoutes.get("/owned", async (req, res) => {
     try{
         
-      
-        const capturedPokemon = await capturedPokemonModel.findOne({name: "ivysaur"})
+        const capturedPokemon = await capturedPokemonModel.find()
 
-        res.status(201).json({
-            message: `Test: ${capturedPokemon} .`
-        })
+        res.status(201).json(capturedPokemon)
     } catch (error) {
         console.log(error)
     }
