@@ -186,12 +186,16 @@ const enemy = async (pokemon: typeof pokemon2Data)  => {
     } else {
 
       if (target === 1) {
-        const deduct = (pkmn1Hp - (move?.power || 0));
+
+
+        const deduct = (pkmn1Hp - ( (2.4*( (move?.power || 0) * (pokemon1Data?.stats.find((s) => s.stat.name === "attack")?.base_stat || 0) / (pokemon1Data?.stats.find((s) => s.stat.name === "defense")?.base_stat || 0) )) || 0)  );
+
+
         console.log(pokemon1Data?.stats.find((s) => s.stat.name === "hp")?.base_stat || 0);
 
         console.log(move?.power || 0);
         console.log(deduct);
-///bacc
+
         addItem("--------------------------------------------------------------------");
         addItem(`pokemon2Data?.name + " used " + (move?.name.toUpperCase()  + " with a power of "+  (move?.power||0)`);
         addItem(pokemon1Data?.name + " remaining HP: " +deduct);
